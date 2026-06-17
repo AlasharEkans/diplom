@@ -1,54 +1,32 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CartModel } from '../models/cartModel';
 import { CartRequestModel } from '../models/cartRequestModel';
-import { OrderRequestModel } from '../models/orderRequestModel'
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class CartService {
+  private baseUrl: string;
 
-  private HttpOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {}
-
-  getBasket(userId: string): Observable<any[]> {
-    return this.http.post<any[]>(this.baseUrl + "cart/getBasket", JSON.stringify(userId), this.HttpOptions);
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl + 'api/cart';
   }
 
-  addToBasket(userId: string, productId: string) {
-    var body = {} as CartRequestModel;
-    body.userId = userId;
-    body.productId = productId;
-    return this.http.post(this.baseUrl + "cart/add", 
-    body,
-    this.HttpOptions);
+  getCart(userId: string): Observable<CartModel[]> {
+    return this.http.get<CartModel[]>(`${this.baseUrl}/${userId}`);
   }
 
-  removeFromBasket(userId: string, productId: string) {
-    var body = {} as CartRequestModel;
-    body.userId = userId;
-    body.productId = productId;
-    return this.http.post(this.baseUrl + "cart/remove", 
-    body,
-    this.HttpOptions);
+  addToCart(request: CartRequestModel): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/add`, request);
   }
 
-  makeOrder(userId: string, products: Array<any>): Observable<any[]> {
-    var body: Array<OrderRequestModel> = products.map(product => ({
-      userId: userId,
-      productId: product.id,
-      count: parseInt(product.count, 10)
-    }));
-    return this.http.post<any[]>(this.baseUrl + "order/makeOrder", JSON.stringify(body), this.HttpOptions);
+  removeFromCart(cartId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/remove/${cartId}`);
   }
 
-  goToOrder() {
-    window.location.href = this.baseUrl + "/order";
+  clearCart(userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/clear/${userId}`);
   }
 }

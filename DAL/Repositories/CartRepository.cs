@@ -1,10 +1,17 @@
 ﻿using Core.Models;
 using DAL.Data;
 using DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
 
-public class CartRepository(StoreContext context) : Repository<Cart>(context), ICartRepository
+public class CartRepository(EducationContext context) : Repository<Cart>(context), ICartRepository
 {
-    private StoreContext StoreContext => Context as StoreContext;
+    public async Task<IEnumerable<Cart>> GetCartByUserIdAsync(Guid userId)
+    {
+        return await Context.Carts
+            .Include(c => c.Course)
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+    }
 }

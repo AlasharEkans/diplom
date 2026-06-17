@@ -6,43 +6,18 @@ using Core.Extantion;
 namespace PL.Angular.Controllers
 {
     [ApiController]
-    [Route("login")]
+    [Route("api/[controller]")]
     public class LoginController(IUserService userService) : ControllerBase
     {
-        [HttpPost("signin")]
-        public async Task<IActionResult> SignIn([FromBody] LoginModel model)
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            if (model == null)
+            var user = await userService.AuthenticateAsync(model.Email, model.Password);
+            if (user == null)
             {
-                return BadRequest("Invalid request body.");
+                return Unauthorized("Invalid email or password.");
             }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid model state.");
-            }
-
-            try
-            {
-                var user = await userService.GetUserLogAsync(
-                    model.Email,
-                    model.PasswordCache,
-                    model.UserRole.ParseStringToRole()
-                );
-
-                if (user != null)
-                {
-                    model.Id = user.Id.ToString();
-                    model.UserRole = user.UserRole.ParseRoleToString();
-                    return Ok(model);
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
-
-            return Unauthorized("Incorrect login and/or password.");
+            return Ok(user);
         }
     }
 }

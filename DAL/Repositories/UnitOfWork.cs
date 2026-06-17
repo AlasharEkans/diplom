@@ -5,47 +5,31 @@ using DAL.Interfaces;
 
 namespace DAL.Repositories;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork(EducationContext context) : IUnitOfWork
 {
-    private readonly StoreContext _storeContext;
-    
-    public ICartRepository Carts { get; }
-    public ICustomersRepository Customers { get; }
-    public IOrdersProductsRepository OrdersProducts { get; }
-    public IOrdersRepository Orders { get; }
-    public IProductRepository Products { get; }
-    public IUserRepository Users { get; }
-    
-    public UnitOfWork(StoreContext storeContext)
+    private readonly EducationContext _context = context;
+    private ICourseRepository? _courses;
+    private IStudentsRepository? _students;
+    private IEnrollmentsRepository? _enrollments;
+    private IEnrollmentCoursesRepository? _enrollmentCourses;
+    private ICartRepository? _carts;
+    private IUserRepository? _users;
+
+    public ICourseRepository Courses => _courses ??= new CourseRepository(_context);
+    public IStudentsRepository Students => _students ??= new StudentRepository(_context);
+    public IEnrollmentsRepository Enrollments => _enrollments ??= new EnrollmentRepository(_context);
+    public IEnrollmentCoursesRepository EnrollmentCourses => _enrollmentCourses ??= new EnrollmentCourseRepository(_context);
+    public ICartRepository Carts => _carts ??= new CartRepository(_context);
+    public IUserRepository Users => _users ??= new UserRepository(_context);
+
+    public async Task<int> SaveChangesAsync()
     {
-        _storeContext = storeContext;
-        Carts = new CartRepository(_storeContext);
-        Customers = new CustomerRepository(_storeContext);
-        OrdersProducts = new OrdersProductsRepository(_storeContext);
-        Orders = new OrderRepository(_storeContext);
-        Products = new ProductRepository(_storeContext);
-        Users = new UserRepository(_storeContext);
-    }
-
-    public async Task SaveAsync() => await _storeContext.SaveChangesAsync();
-
-    private bool disposed = false;
-
-    public virtual void Dispose(bool disposing)
-    {
-        if (!this.disposed)
-        {
-            if (disposing)
-            {
-                _storeContext.Dispose();
-            }
-            this.disposed = true;
-        }
+        return await _context.SaveChangesAsync();
     }
 
     public void Dispose()
     {
-        Dispose(true);
+        _context.Dispose();
         GC.SuppressFinalize(this);
     }
 }

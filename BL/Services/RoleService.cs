@@ -1,29 +1,21 @@
-﻿using Core.Enums;
-using BL.Services.Interfaces;
+﻿using BL.Services.Interfaces;
+using Core.Enums;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BL.Services;
 
 public class RoleService : IRoleService
 {
-    public Role RoleSpecificator(string role)
+    public Task<IEnumerable<string>> GetAvailableRolesAsync()
     {
-        var score = role switch
-        {
-            "admin" => 2,
-            "user" => 1,
-            _ => 0
-        };
-
-        var result = score switch
-        {
-            1 => Role.User,
-            2 => Role.Admin,
-            _ => Role.Guest
-        };
-        return result;
+        var roles = Enum.GetNames(typeof(Role)).AsEnumerable();
+        return Task.FromResult(roles);
     }
 
-    public bool IsAdmin(string role) => RoleSpecificator(role) == Role.Admin;
-
-    public bool IsUser(string role) => RoleSpecificator(role) == Role.User;
+    public bool IsInRole(Role userRole, Role requiredRole)
+    {
+        return userRole == requiredRole;
+    }
 }

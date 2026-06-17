@@ -1,12 +1,8 @@
-export class CartModel {
-    constructor(
-        public id: string = '',
-        public name: string = '',
-        public description: string = '',
-        public category: string = '',
-        public price: string = '',
-        public count: string = '',
-        public imageName: string = '',
-        public urlImage: string = ''
-    ) { }
+import { CourseModel } from './courseModel';
+
+export interface CartModel {
+  id: string;
+  userId: string;
+  courseId: string;
+  course: CourseModel | null;
 }

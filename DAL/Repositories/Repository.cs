@@ -1,50 +1,46 @@
-﻿using System;
+﻿using DAL.Data;
+using DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
 
-public class Repository<TEntity>(DbContext context) : IRepository<TEntity> 
-    where TEntity : class
+public class Repository<T>(EducationContext context) : IRepository<T> where T : class
 {
-    protected readonly DbContext Context = context ?? throw new ArgumentNullException(nameof(context));
-    
-    public async Task<TEntity> GetAsync(Guid id)
+    protected readonly EducationContext Context = context;
+    protected readonly DbSet<T> DbSet = context.Set<T>();
+
+    public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await Context.Set<TEntity>().FindAsync(id);
+        return await DbSet.ToListAsync();
     }
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync()
+    public async Task<T?> GetByIdAsync(Guid id)
     {
-        return await Context.Set<TEntity>().ToListAsync();
+        return await DbSet.FindAsync(id);
     }
 
-    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
-        return await Context.Set<TEntity>().Where(predicate).ToListAsync();
+        return await DbSet.Where(predicate).ToListAsync();
     }
 
-    public async Task CreateAsync(TEntity entity)
+    public async Task AddAsync(T entity)
     {
-        await Context.Set<TEntity>().AddAsync(entity);
+        await DbSet.AddAsync(entity);
     }
 
-    public void Update(TEntity entity)
+    public void Update(T entity)
     {
-        Context.Entry(entity).State = EntityState.Modified;
+        DbSet.Update(entity);
     }
 
-    public void Delete(TEntity entity)
+    public void Delete(T entity)
     {
-        Context.Set<TEntity>().Remove(entity);
-    }
-
-    public void DeleteRange(IEnumerable<TEntity> entities)
-    {
-        Context.Set<TEntity>().RemoveRange(entities);
+        DbSet.Remove(entity);
     }
 }

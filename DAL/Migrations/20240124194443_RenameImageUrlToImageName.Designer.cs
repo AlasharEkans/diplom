@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL.Migrations
 {
-    [DbContext(typeof(StoreContext))]
+    [DbContext(typeof(EducationContext))]
     [Migration("20240124194443_RenameImageUrlToImageName")]
     partial class RenameImageUrlToImageName
     {

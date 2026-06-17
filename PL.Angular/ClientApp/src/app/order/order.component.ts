@@ -1,53 +1,58 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OrderService } from './order.service';
+import { EnrollmentModel } from '../models/enrollmentModel';
 import { StorageService } from '../storage/storage.service';
-import { OrderModel } from '../models/orderModel';
-import { OrderedProduct } from '../models/orderedProduct';
 
 @Component({
-    selector: 'app-order',
-    templateUrl: './order.component.html',
-    styleUrls: ['./order.component.css'],
-    standalone: false
-})
-export class OrderComponent {
-    constructor(
-        private orderServise: OrderService, 
-        private storageService: StorageService) {}
-    
-    isOrderEmpty = true;
-    public userId: string = "";
-    public orderInformation: OrderModel[] = [];
-    public productInformationList: OrderedProduct[] = [];
-    
-    ngOnInit(): void {
-        this.userId = this.storageService.getUserId();
-        this.getData();
-    }
+  selector: 'app-order',
+  templateUrl: './order.component.html',
+  styleUrls: ['./order.component.css']
+} as any)
+export class OrderComponent implements OnInit {
+  public enrollments: EnrollmentModel[] = [];
+  private userId: string | null = null;
 
-    getData(): void {
-      this.orderServise.getOrder(this.userId).subscribe(
-        (data: any[]) => {
-          this.orderInformation = data.map((item) => ({
-            id: item.id,
-            userId: item.userId,
-            phoneNumber: item.phoneNumber,
-            city: item.city,
-            sum: item.sum.toString(),
-            postIndex: item.postIndex,
-            products: item.orderedProducts
-          }));
-          if(this.orderInformation.length != 0){
-            this.isOrderEmpty = false;
-          }
+  constructor(
+    private orderService: OrderService,
+    private storageService: StorageService
+  ) { }
+
+  ngOnInit(): void {
+    this.userId = this.storageService.getUserId();
+    if (this.userId) {
+      this.loadEnrollments();
+    }
+  }
+
+  loadEnrollments(): void {
+    if (this.userId) {
+      this.orderService.getStudentEnrollments(this.userId).subscribe({
+        next: (data) => {
+          this.enrollments = data;
         },
-        (error) => {
-          this.isOrderEmpty = true;
-          console.error(error);
+        error: (err) => {
+          console.error(err);
         }
-      );
+      });
     }
+  }
 
-    payOrder(): void{
+  getStatusText(status: string | number): string {
+    switch (status) {
+      case 0:
+      case 'Requested':
+        return 'Очікує підтвердження';
+      case 1:
+      case 'Active':
+        return 'Активне навчання';
+      case 2:
+      case 'Completed':
+        return 'Курс завершено';
+      case 3:
+      case 'Cancelled':
+        return 'Скасовано';
+      default:
+        return 'Невідомий статус';
     }
+  }
 }
