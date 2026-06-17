@@ -1,46 +1,33 @@
-﻿using Core.Enums;
+﻿using BL.Services.Interfaces;
+using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Security.Cryptography;
-using BL.Services.Interfaces;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BL.Services;
 
 public class PasswordService : IPasswordService
 {
-    public PassStrength PasswordStrength(string password)
+    public string HashPassword(string password)
     {
-        var score = 0;
-        var patterns = new Dictionary<string, int> { { @"\d", 5 },
-            { @"[a-zA-Z]", 10 },
-            { @"[!,@,#,\$,%,\^,&,\*,?,_,~]", 15 } };
-        if (password.Length > 6)
-            score += patterns.Sum(pattern => 
-                Regex.Matches(password, pattern.Key).Count * pattern.Value);
-
-        var result = (score / 50) switch
-        {
-            0 => PassStrength.Low,
-            1 => PassStrength.Medium,
-            2 => PassStrength.High,
-            3 => PassStrength.VeryHigh,
-            _ => PassStrength.Paranoid
-        };
-        return result;
+        return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
     }
 
-    public string GetHashString(string password)
+    public bool VerifyPassword(string password, string hashedPassword)
     {
-        var bytes = Encoding.Unicode.GetBytes(password);
-
-        var CSP = new MD5CryptoServiceProvider();
-
-        var byteHash = CSP.ComputeHash(bytes);
-
-        return byteHash.Aggregate(string.Empty, (current, b) => current + $"{b:x2}");
+        var hash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
+        return hash == hashedPassword;
     }
 
-    public bool IsPasswordStrong(string password) => PasswordStrength(password) >= PassStrength.Medium;
+    public PasswordStrength CheckStrength(string password)
+    {
+        if (string.IsNullOrEmpty(password)) return PasswordStrength.None;
+        if (password.Length < 4) return PasswordStrength.VeryWeak;
+        if (password.Length < 8) return PasswordStrength.Weak;
+        if (password.Any(char.IsUpper) && password.Any(char.IsDigit)) return PasswordStrength.Strong;
+        return PasswordStrength.Medium;
+    }
 }

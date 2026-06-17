@@ -8,7 +8,7 @@ namespace DAL.Test.Repositories
 {
     public class UserRepositoryTest
     {
-        private readonly StoreContext _storeContext = A.Fake<StoreContext>();
+        private readonly EducationContext _storeContext = A.Fake<EducationContext>();
 
         [Fact]
         public async Task GetUser_Success_Test()

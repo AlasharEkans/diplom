@@ -1,53 +1,52 @@
-import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ProductService } from './product.service';
-import { ProductModel } from '../models/productModel';
+import { Component, OnInit } from '@angular/core';
+import { CourseService } from './course.service';
+import { CourseModel } from '../models/courseModel';
+import { CartService } from '../cart/cart.service';
+import { StorageService } from '../storage/storage.service';
 
 @Component({
-    selector: 'app-product',
-    templateUrl: './product.component.html',
-    styleUrls: ['./product.component.css'],
-    standalone: false
-})
-export class ProductComponent {
-    items = this.productService.getItems();
+  selector: 'app-product',
+  templateUrl: './product.component.html',
+  styleUrls: ['./product.component.css']
+} as any)
+export class ProductComponent implements OnInit {
+  public courses: CourseModel[] = [];
+  private userId: string | null = null;
 
-    checkoutForm = this.formBuilder.group({
-        category: '',
-        name: '',
-        description: '',
-        price: 0,
-        ImageName: ''
+  constructor(
+    private courseService: CourseService,
+    private cartService: CartService,
+    private storageService: StorageService
+  ) { }
+
+  ngOnInit(): void {
+    this.userId = this.storageService.getUserId();
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    this.courseService.getCourses().subscribe({
+      next: (data) => {
+        this.courses = data;
+      },
+      error: (err) => {
+        console.error(err);
+      }
     });
+  }
 
-    constructor(
-        private formBuilder: FormBuilder,
-        private productService: ProductService) 
-    {}
-
-    public product: ProductModel = new ProductModel();
-
-    onSubmit(): void {
-        this.product = new ProductModel(
-            this.checkoutForm.value.category ?? ' ',
-            this.checkoutForm.value.name ?? ' ',
-            this.checkoutForm.value.description ?? ' ',
-            this.checkoutForm.value.price ?? 0,
-            this.checkoutForm.value.ImageName ?? ' '
-        );
-
-        this.productService.addProduct(this.product).subscribe(
-            (data) => {
-                console.log('Product added:', data);
-            },
-            (error) => {
-              console.error(error);
-            }
-        );
-        console.log(
-            'Your product has been added',
-            this.checkoutForm.value
-        );
-        this.checkoutForm.reset();
+  enroll(courseId: string): void {
+    if (!this.userId) {
+      alert('Будь ласка, авторизуйтесь у системі');
+      return;
     }
+    this.cartService.addToCart({ userId: this.userId, courseId: courseId }).subscribe({
+      next: () => {
+        alert('Курс додано до списку обраного');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
 }

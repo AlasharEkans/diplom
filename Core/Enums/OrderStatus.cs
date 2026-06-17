@@ -1,10 +1,10 @@
 ﻿namespace Core.Enums
 {
-    public enum OrderStatus
+    public enum EnrollmentStatus
     {
-        Open     = 1, 
-        Paid     = 2, 
-        Deliver = 3, 
-        Completed = 4, 
+        Requested,
+        Active,
+        Completed,
+        Cancelled
     }
 }

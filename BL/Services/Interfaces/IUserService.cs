@@ -8,21 +8,8 @@ namespace BL.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<UserDTO> GetUserAsync(Guid id);
-
-    Task<IEnumerable<UserDTO>> GetUsersAsync();
-
-    Task<CustomerDTO> GetCustomerAsync(Guid id);
-
-    Task<CustomerDTO> GetCustomerByUserIdAsync(Guid userId);
-
-    Task<IEnumerable<CustomerDTO>> GetCustomersAsync();
-
-    Task SaveUserAsync(UserDTO userDTO, CustomerDTO customerDTO);
-
-    Task<bool> IsPasswordSameAsync(string password);
-
-    Task<bool> IsEmailFreeAsync(string email);
-
-    Task<UserDTO> GetUserLogAsync(string email, string password, Role userRole);
+    Task<UserDTO?> AuthenticateAsync(string email, string password);
+    Task<UserDTO> RegisterAsync(string email, string password, string firstName, string lastName);
+    Task<UserDTO?> GetByIdAsync(Guid id);
+    Task<IEnumerable<UserDTO>> GetAllUsersAsync();
 }

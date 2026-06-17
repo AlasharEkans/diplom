@@ -5,17 +5,11 @@ namespace DAL.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
+    ICourseRepository Courses { get; }
+    IStudentsRepository Students { get; }
+    IEnrollmentsRepository Enrollments { get; }
+    IEnrollmentCoursesRepository EnrollmentCourses { get; }
     ICartRepository Carts { get; }
-    
-    ICustomersRepository Customers { get; }
-    
-    IOrdersProductsRepository OrdersProducts { get; }
-    
-    IOrdersRepository Orders { get; }
-    
-    IProductRepository Products { get; }
-    
     IUserRepository Users { get; }
-
-    Task SaveAsync();
+    Task<int> SaveChangesAsync();
 }

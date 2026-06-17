@@ -1,4 +1,5 @@
-﻿using BL.Services.Interfaces;
+﻿using BL.DTO;
+using BL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using PL.Angular.Models;
 using System;
@@ -9,76 +10,35 @@ using System.Threading.Tasks;
 namespace PL.Angular.Controllers
 {
     [ApiController]
-    [Route("cart")]
-    public class CartController(ICartService cartService, IS3Bucket s3Bucket) : ControllerBase
+    [Route("api/[controller]")]
+    public class CartController(ICartService cartService) : ControllerBase
     {
-        [HttpPost("getBasket")]
-        public async Task<IActionResult> GetBasket([FromBody] string userId)
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<CartDTO>>> GetCart(Guid userId)
         {
-            if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
-            {
-                return BadRequest("Invalid user ID.");
-            }
-
-            var cart = await cartService.ShowCartAsync(userGuid);
-
-            if (cart?.Products == null || !cart.Products.Any())
-            {
-                return NotFound("Cart is empty or user not found.");
-            }
-
-            var cartModels = cart.Products
-                .GroupBy(product => product.Id)
-                .Select(group => new CartModel
-                {
-                    Id = group.Key,
-                    Name = group.First().Name,
-                    Description = group.First().Description,
-                    Category = group.First().Category,
-                    Price = group.First().Price,
-                    Count = (uint)group.Count(),
-                    ImageName = group.First().ImageName,
-                    UrlImage = s3Bucket.GetImageLink(group.First().ImageName)
-                })
-                .ToList();
-
-            return Ok(cartModels);
+            var items = await cartService.GetCartByUserIdAsync(userId);
+            return Ok(items);
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart([FromBody] CartRequestModel cartRequestModel)
+        public async Task<IActionResult> AddToCart([FromBody] CartRequestModel request)
         {
-            if (cartRequestModel == null ||
-                !Guid.TryParse(cartRequestModel.ProductId, out var productGuid) ||
-                !Guid.TryParse(cartRequestModel.UserId, out var userGuid))
-            {
-                return BadRequest("Invalid input.");
-            }
-
-            var isProductExists = await cartService.CheckItemAsync(productGuid);
-            if (!isProductExists)
-            {
-                return NotFound("Product not found.");
-            }
-
-            await cartService.AddItemAsync(productGuid, userGuid);
-
-            return Ok(new { message = "Product added to cart." });
+            await cartService.AddToCartAsync(request.UserId, request.CourseId);
+            return Ok();
         }
 
-        [HttpPost("remove")]
-        public async Task<IActionResult> RemoveFromCart([FromBody] CartRequestModel cartRequestModel)
+        [HttpDelete("remove/{cartId}")]
+        public async Task<IActionResult> RemoveFromCart(Guid cartId)
         {
-            if (cartRequestModel == null ||
-                !Guid.TryParse(cartRequestModel.ProductId, out var productGuid) ||
-                !Guid.TryParse(cartRequestModel.UserId, out var userGuid))
-            {
-                return BadRequest("Invalid input.");
-            }
+            await cartService.RemoveFromCartAsync(cartId);
+            return Ok();
+        }
 
-            await cartService.RemoveItemAsync(userGuid, productGuid);
-
-            return Ok(new { message = "Product removed from cart." });
+        [HttpDelete("clear/{userId}")]
+        public async Task<IActionResult> ClearCart(Guid userId)
+        {
+            await cartService.ClearCartAsync(userId);
+            return Ok();
         }
     }
 }

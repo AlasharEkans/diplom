@@ -4,9 +4,7 @@ namespace BL.Services.Interfaces;
 
 public interface IPasswordService
 {
-    public PassStrength PasswordStrength(string password);
-
-    public string GetHashString(string password);
-
-    bool IsPasswordStrong(string password);
+    string HashPassword(string password);
+    bool VerifyPassword(string password, string hashedPassword);
+    PasswordStrength CheckStrength(string password);
 }

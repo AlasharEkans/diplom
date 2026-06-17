@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32811.315
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11911.148 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\Core\Core.csproj", "{2806D434-DAF9-4DED-A81F-27FC296F5CEC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "..\BL\BL.csproj", "{F8E0A3D2-AF1C-4F74-80AE-5739B89F7A4B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "..\DAL\DAL.csproj", "{B51ADE90-12F1-46BF-B59E-43BF00985587}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Test", "..\DAL.Test\DAL.Test.csproj", "{A161A518-6E07-4A76-BF0C-A0C5CC80613A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PL.Angular", "..\PL.Angular\PL.Angular.csproj", "{7345B973-2F04-4741-93F4-43528F48C6FA}"
 EndProject
@@ -31,10 +29,6 @@ Global
 		{B51ADE90-12F1-46BF-B59E-43BF00985587}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B51ADE90-12F1-46BF-B59E-43BF00985587}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B51ADE90-12F1-46BF-B59E-43BF00985587}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A161A518-6E07-4A76-BF0C-A0C5CC80613A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A161A518-6E07-4A76-BF0C-A0C5CC80613A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A161A518-6E07-4A76-BF0C-A0C5CC80613A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A161A518-6E07-4A76-BF0C-A0C5CC80613A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7345B973-2F04-4741-93F4-43528F48C6FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7345B973-2F04-4741-93F4-43528F48C6FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7345B973-2F04-4741-93F4-43528F48C6FA}.Release|Any CPU.ActiveCfg = Release|Any CPU

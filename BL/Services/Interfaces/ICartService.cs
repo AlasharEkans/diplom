@@ -7,17 +7,8 @@ namespace BL.Services.Interfaces;
 
 public interface ICartService
 {
-    Task AddItemAsync(Guid idItem, Guid userId);
-
-    Task RemoveItemAsync(Guid userId, Guid productId);
-
-    Task<bool> CheckItemAsync(Guid idItem);
-
-    Task<decimal> ComputeTotalValueAsync(IEnumerable<Guid> itemIds);
-
-    Task<CartDTO> ShowCartAsync(Guid userId);
-
-    Task MakeOrderAsync(Guid userId);
-
-    Task ClearAsync(Guid userId);
+    Task<IEnumerable<CartDTO>> GetCartByUserIdAsync(Guid userId);
+    Task AddToCartAsync(Guid userId, Guid courseId);
+    Task RemoveFromCartAsync(Guid cartId);
+    Task ClearCartAsync(Guid userId);
 }

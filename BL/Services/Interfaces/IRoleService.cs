@@ -1,12 +1,11 @@
 ﻿using Core.Enums;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BL.Services.Interfaces;
 
 public interface IRoleService
 {
-    public Role RoleSpecificator(string role);
-
-    bool IsAdmin(string role);
-
-    bool IsUser(string role);
+    Task<IEnumerable<string>> GetAvailableRolesAsync();
+    bool IsInRole(Role userRole, Role requiredRole);
 }

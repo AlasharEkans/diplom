@@ -1,63 +1,17 @@
-<div class="container_with_sidebar">
-  <main class="main_bar">
-    <div>
-      <h3>{{ 'Add product' | translate }}</h3>
-      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
-        <legend> {{ 'Product Details' | translate }} </legend>
-        <fieldset>
-
-          <div>
-            <label for="category"> {{ 'Category' | translate }} </label>
-            <input
-              id="category"
-              type="text"
-              formControlName="category"
-              aria-label="Product category"
-            />
-          </div>
-
-          <div>
-            <label for="name"> {{ 'Name' | translate }} </label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              aria-label="Product name"
-            />
-          </div>
-
-          <div>
-            <label for="description"> {{ 'Description' | translate }} </label>
-            <textarea
-              id="description"
-              formControlName="description"
-              aria-label="Product description"
-            ></textarea>
-          </div>
-
-          <div>
-            <label for="price"> {{ 'Price' | translate }} </label>
-            <input
-              id="price"
-              type="number"
-              formControlName="price"
-              aria-label="Product price"
-            />
-          </div>
-
-          <div>
-            <label for="ImageName"> {{ 'ImageName' | translate }} </label>
-            <input
-              id="ImageName"
-              type="text"
-              formControlName="ImageName"
-              aria-label="Product image URL"
-            />
-          </div>
-        </fieldset>
-
-        <button class="button" type="submit">{{ 'Add product' | translate }}</button>
-      </form>
+<div class="container mt-4">
+  <h2 class="mb-4">Доступні навчальні курси</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let course of courses">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ course.title }}</h5>
+          <p class="card-text text-muted mb-2">Автор: {{ course.author }}</p>
+          <p class="card-text flex-grow-1">{{ course.description }}</p>
+          <button class="btn btn-primary w-100 mt-3" (click)="enroll(course.id)">
+            Подати заявку на курс
+          </button>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
 </div>

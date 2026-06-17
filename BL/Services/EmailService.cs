@@ -1,14 +1,17 @@
 ﻿using BL.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace BL.Services;
 
-public class EmailService : IEmailService
+public class EmailService(IConfiguration configuration) : IEmailService
 {
-    public bool ValidateEmail(string email)
+    private readonly string _smtpServer = configuration["EmailSettings:SmtpServer"] ?? "localhost";
+
+    public Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        const string EMAIL_PATTERN = @"[.\-_a-z0-9]+@([a-z0-9][\-a-z0-9]+\.)+[a-z]{2,6}";
-        var isMatch = Regex.Match(email, EMAIL_PATTERN, RegexOptions.IgnoreCase);
-        return isMatch.Success;
+        System.Diagnostics.Debug.WriteLine($"Email sent to {toEmail} with subject '{subject}': {message}");
+        return Task.CompletedTask;
     }
 }

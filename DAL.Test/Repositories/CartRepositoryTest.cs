@@ -9,7 +9,7 @@ namespace DAL.Test.Repositories
 {
     public class CartRepositoryTest
     {
-        private readonly StoreContext _storeContext = A.Fake<StoreContext>();
+        private readonly EducationContext _storeContext = A.Fake<EducationContext>();
 
         [Fact]
         public async Task GetCart_Success_Test()
