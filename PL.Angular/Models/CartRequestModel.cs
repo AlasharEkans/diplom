@@ -2,7 +2,7 @@
 {
     public class CartRequestModel
     {
-        public required string UserId { get; set; }
-        public required string ProductId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid CourseId { get; set; }
     }
 }

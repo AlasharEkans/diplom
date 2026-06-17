@@ -1,6 +1,8 @@
-﻿namespace BL.Services.Interfaces;
+﻿using System.Threading.Tasks;
+
+namespace BL.Services.Interfaces;
 
 public interface IEmailService
 {
-    public bool ValidateEmail(string email);
+    Task SendEmailAsync(string toEmail, string subject, string message);
 }

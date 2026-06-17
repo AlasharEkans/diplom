@@ -8,20 +8,20 @@ namespace DAL.Test.Repositories
 {
     public class ProductRepositoryTest
     {
-        private readonly StoreContext _storeContext = A.Fake<StoreContext>();
+        private readonly EducationContext _storeContext = A.Fake<EducationContext>();
 
         [Fact]
         public async Task GetProduct_Success_Test()
         {
             var productId = Guid.NewGuid();
-            var fakeProduct = new Product { Id = productId, Name = "Product" };
+            var fakeProduct = new Course { Id = productId, Name = "Product" };
 
-            _storeContext.Products = A.Fake<DbSet<Product>>();
+            _storeContext.Products = A.Fake<DbSet<Course>>();
 
             A.CallTo(() => _storeContext.Products.FindAsync(A<Guid>._))
-                .Returns(new ValueTask<Product>(fakeProduct));
+                .Returns(new ValueTask<Course>(fakeProduct));
 
-            var productRepository = new ProductRepository(_storeContext);
+            var productRepository = new CourseRepository(_storeContext);
             var result = await productRepository.GetAsync(productId);
 
             Assert.NotNull(result);

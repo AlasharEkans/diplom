@@ -1,21 +1,32 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EnrollmentModel } from '../models/enrollmentModel';
+import { EnrollmentRequestModel } from '../models/enrollmentRequestModel';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class OrderService {
+  private baseUrl: string;
 
-  private HttpOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl + 'api/enrollments';
+  }
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {}
+  createEnrollment(request: EnrollmentRequestModel): Observable<EnrollmentModel> {
+    return this.http.post<EnrollmentModel>(`${this.baseUrl}/create`, request);
+  }
 
-  getOrder(userId: string): Observable<any[]> {
-    return this.http.post<any[]>(this.baseUrl + "order/getByUserId", JSON.stringify(userId), this.HttpOptions);
+  getStudentEnrollments(userId: string): Observable<EnrollmentModel[]> {
+    return this.http.get<EnrollmentModel[]>(`${this.baseUrl}/student/${userId}`);
+  }
+
+  getAllEnrollments(): Observable<EnrollmentModel[]> {
+    return this.http.get<EnrollmentModel[]>(this.baseUrl);
+  }
+
+  updateStatus(id: string, status: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}/status`, status);
   }
 }

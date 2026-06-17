@@ -4,7 +4,11 @@ using DAL.Interfaces;
 
 namespace DAL.Repositories;
 
-public class UserRepository(StoreContext context) : Repository<User>(context), IUserRepository
+public class UserRepository(EducationContext context) : Repository<User>(context), IUserRepository
 {
-    private StoreContext StoreContext => Context as StoreContext;
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await Context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
 }

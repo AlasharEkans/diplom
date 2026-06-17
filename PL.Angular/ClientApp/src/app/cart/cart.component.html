@@ -1,27 +1,20 @@
-<div class="container">
-    <div>
-    <h3>{{ 'Cart' | translate }}</h3>
-        <div *ngIf="isBasketEmpty">
-            <h3>{{ 'BasketEmpty' | translate }}</h3>
+<div class="container mt-4">
+  <h2 class="mb-4">Обрані курси (Заявки на підписання)</h2>
+  <div *ngIf="cartItems.length === 0" class="alert alert-info">
+    У вас немає вибраних курсів.
+  </div>
+  <div *ngIf="cartItems.length > 0">
+    <ul class="list-group mb-4">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let item of cartItems">
+        <div>
+          <h5 class="mb-1">{{ item.course?.title }}</h5>
+          <small class="text-muted">Автор: {{ item.course?.author }}</small>
         </div>
-        <div *ngIf="!isBasketEmpty">
-            <ul class="goods">
-              <li class="goods_cell" *ngFor="let product of productInformationList">
-                <div class="tile">
-                  <a class="tile_picture">
-                    <img [src]="product.urlImage" alt={{product.imageName}}>
-                  </a>
-                  <a class="tile_title">
-                    {{product.name}}
-                  </a>
-                  <p class="tile_price">{{ 'Price' | translate }}: {{product.price}}</p>
-                  <p>Count: {{product.count}}</p>
-                  <button mat-flat-button color="warn" (click)="removeProductFromBasket(product.id)">{{ 'Remove' | translate }}</button>
-                </div>
-              </li>
-            </ul>
-            <br />
-            <button mat-flat-button color="primary" (click)="makeOrder()">{{ 'Order' | translate }}</button>
-          </div>
-    </div>
+        <button class="btn btn-danger btn-sm" (click)="removeItem(item.id)">Видалити</button>
+      </li>
+    </ul>
+    <button class="btn btn-success w-100 py-2" (click)="confirmEnrollment()">
+      Підтвердити запис на вибрані курси
+    </button>
+  </div>
 </div>

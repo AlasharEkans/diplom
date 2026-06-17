@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { StoreService } from './store.service';
 import { StorageService } from '../storage/storage.service';
 import { CartService } from '../cart/cart.service';
-import { MainProductInformation } from '../models/mainProductInformation'
+import { MainProductInformation } from '../models/mainCourseInformation'
 
 @Component({
     selector: 'app-store',

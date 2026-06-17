@@ -1,4 +1,5 @@
-﻿using BL.DTO;
+﻿using AutoMapper;
+using BL.DTO;
 using BL.Services.Interfaces;
 using Core.Enums;
 using Core.Models;
@@ -10,115 +11,50 @@ using System.Threading.Tasks;
 
 namespace BL.Services;
 
-public class CartService(IUnitOfWork unitOfWork) : ICartService
+public class CartService(IUnitOfWork unitOfWork, IMapper mapper) : ICartService
 {
-    public async Task AddItemAsync(Guid idItem, Guid userId)
+    public async Task<IEnumerable<CartDTO>> GetCartByUserIdAsync(Guid userId)
     {
-        var product = await unitOfWork.Products.GetAsync(idItem);
-        if (product == null)
-            throw new Exception("Product not found");
-
-        var cartItem = new Cart
-        {
-            ProductsId = idItem,
-            UserId = userId
-        };
-
-        await unitOfWork.Carts.CreateAsync(cartItem);
-        await unitOfWork.SaveAsync();
+        var items = await unitOfWork.Carts.GetCartByUserIdAsync(userId);
+        return mapper.Map<IEnumerable<CartDTO>>(items);
     }
 
-    public async Task<bool> CheckItemAsync(Guid idItem)
+    public async Task AddToCartAsync(Guid userId, Guid courseId)
     {
-        var product = await unitOfWork.Products.GetAsync(idItem);
-        return product != null;
-    }
-
-    public async Task RemoveItemAsync(Guid userId, Guid productId)
-    {
-        var cartItems = await unitOfWork.Carts.GetAllAsync();
-
-        var cartItem = cartItems.FirstOrDefault(x => x.ProductsId == productId && x.UserId == userId);
-
-        if (cartItem != null)
+        var existingItems = await unitOfWork.Carts.GetCartByUserIdAsync(userId);
+        if (existingItems.Any(i => i.CourseId == courseId))
         {
-            unitOfWork.Carts.Delete(cartItem);
-            await unitOfWork.SaveAsync();
+            return;
         }
-    }
 
-
-    public async Task<decimal> ComputeTotalValueAsync(IEnumerable<Guid> itemIds)
-    {
-        var products = await unitOfWork.Products.GetAllAsync();
-        var totalSum = products
-            .Where(product => itemIds.Contains(product.Id))
-            .Sum(product => product.Price);
-
-        return totalSum;
-    }
-
-
-    public async Task ClearAsync(Guid userId)
-    {
-        var cartItems = (await unitOfWork.Carts.GetAllAsync())
-            .Where(x => x.UserId == userId)
-            .ToList();
-
-        unitOfWork.Carts.DeleteRange(cartItems);
-        await unitOfWork.SaveAsync();
-    }
-
-    public async Task<CartDTO> ShowCartAsync(Guid userId)
-    {
-        var cartItems = (await unitOfWork.Carts.GetAllAsync())
-            .Where(cart => cart.UserId == userId)
-            .ToList();
-
-        var productIds = cartItems.Select(cart => cart.ProductsId).ToList();
-
-        var products = await unitOfWork.Products
-            .GetAsync(productIds);
-
-        var productDTOs = products.Select(product => new ProductDTO
-        {
-            Id = product.Id,
-            Price = product.Price,
-            Category = product.Category,
-            Name = product.Name,
-            Description = product.Description,
-            ImageName = product.ImageName
-        }).ToList();
-
-        return new CartDTO
+        var cart = new Cart
         {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Products = productDTOs,
-            Sum = productDTOs.Sum(p => p.Price)
+            CourseId = courseId
         };
+
+        await unitOfWork.Carts.AddAsync(cart);
+        await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task MakeOrderAsync(Guid userId)
+    public async Task RemoveFromCartAsync(Guid cartId)
     {
-        var productIds = await TakeItemsFromCartAsync(userId);
-
-        var order = new Order
+        var cart = await unitOfWork.Carts.GetByIdAsync(cartId);
+        if (cart != null)
         {
-            UserId = userId,
-            Sum = await ComputeTotalValueAsync(productIds),
-            OrderTime = DateTime.UtcNow,
-            Status = OrderStatus.Open
-        };
-
-        await unitOfWork.Orders.CreateAsync(order);
-        await unitOfWork.SaveAsync();
+            unitOfWork.Carts.Delete(cart);
+            await unitOfWork.SaveChangesAsync();
+        }
     }
 
-    private async Task<IEnumerable<Guid>> TakeItemsFromCartAsync(Guid userId)
+    public async Task ClearCartAsync(Guid userId)
     {
-        var cartItems = await unitOfWork.Carts.GetAllAsync();
-        return cartItems.Where(cart => cart.UserId == userId) 
-            .Select(cart => cart.ProductsId); 
+        var items = await unitOfWork.Carts.GetCartByUserIdAsync(userId);
+        foreach (var item in items)
+        {
+            unitOfWork.Carts.Delete(item);
+        }
+        await unitOfWork.SaveChangesAsync();
     }
 }

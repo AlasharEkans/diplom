@@ -5,11 +5,7 @@ namespace BL.DTO;
 
 public class UserDTO
 {
-    public Guid Id { set; get; }
-
-    public Role UserRole { set; get; }
-
-    public string Email { set; get; }
-
-    public string Password { set; get; }
+    public Guid Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public Role Role { get; set; }
 }

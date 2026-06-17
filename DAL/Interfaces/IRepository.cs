@@ -5,19 +5,12 @@ using System.Threading.Tasks;
 
 namespace DAL.Interfaces;
 
-public interface IRepository<TEntity> where TEntity : class
+public interface IRepository<T> where T : class
 {
-    Task<TEntity> GetAsync(Guid id);
-        
-    Task<IEnumerable<TEntity>> GetAllAsync();
-        
-    Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
-
-    Task CreateAsync(TEntity entity);
-
-    void Update(TEntity entity);
-
-    void Delete(TEntity entity);
-
-    void DeleteRange(IEnumerable<TEntity> entities);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T?> GetByIdAsync(Guid id);
+    Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+    Task AddAsync(T entity);
+    void Update(T entity);
+    void Delete(T entity);
 }

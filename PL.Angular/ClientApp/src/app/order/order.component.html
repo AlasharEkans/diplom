@@ -1,36 +1,27 @@
-<div class="container">
-    <div>
-    <h3>{{ 'OrderNoun' | translate }}</h3>
-        <div *ngIf="isOrderEmpty">
-            <h3>{{ 'OrderEmpty' | translate }}</h3>
-        </div>
-        <div *ngIf="!isOrderEmpty">
-            <ul class="orders">
-                <li class="orders_cell" *ngFor="let order of orderInformation; let i = index">
-                  <div class="tile">
-                    <a class="tile_title">
-                      {{ 'OrderNoun' | translate }} №{{ (i + 1) }}
-                    </a>
-                    <ul class="goods">
-                      <li class="goods_cell" *ngFor="let product of order.products">
-                        <div class="tile">
-                          <a class="tile_picture">
-                            <img [src]="product.urlImage" alt={{product.imageName}}>
-                          </a>
-                          <a class="tile_title">
-                            {{product.name}}
-                          </a>
-                          <p class="tile_price">{{ 'Price' | translate }}: {{product.price}}</p>
-                          <p>{{ 'Count' | translate }}: {{product.count}}</p>
-                        </div>
-                      </li>
-                    </ul>
-                    <p class="tile_price">{{ 'Sum' | translate }}: {{order.sum}}</p>
-                  </div>
-                </li>
-            </ul>
-            <br />
-            <button mat-flat-button color="primary" (click)="payOrder()">{{ 'Pay' | translate }}</button>
-          </div>
+<div class="container mt-4">
+  <h2 class="mb-4">Історія моїх записів та статус навчання</h2>
+  <div *ngIf="enrollments.length === 0" class="alert alert-info">
+    Ви ще не записані на жоден курс.
+  </div>
+  <div class="card mb-3 shadow-sm" *ngFor="let enrollment of enrollments">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><strong>Дата запису:</strong> {{ enrollment.enrolledAt | date:'dd.MM.yyyy HH:mm' }}</span>
+      <span class="badge" [ngClass]="{
+        'bg-warning': enrollment.status === 'Requested' || enrollment.status === 0,
+        'bg-success': enrollment.status === 'Active' || enrollment.status === 1,
+        'bg-info': enrollment.status === 'Completed' || enrollment.status === 2,
+        'bg-danger': enrollment.status === 'Cancelled' || enrollment.status === 3
+      }">
+        {{ getStatusText(enrollment.status) }}
+      </span>
     </div>
+    <div class="card-body">
+      <ul class="list-unstyled mb-0">
+        <li *ngFor="let course of enrollment.courses" class="border-bottom py-2">
+          <h6 class="mb-0">{{ course.title }}</h6>
+          <small class="text-muted">Лектор: {{ course.author }}</small>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

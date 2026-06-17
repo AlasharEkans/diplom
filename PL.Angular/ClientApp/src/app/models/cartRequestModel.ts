@@ -1,6 +1,4 @@
-export class CartRequestModel {
-    constructor(
-        public userId: string = '',
-        public productId: string = '',
-    ) { }
+export interface CartRequestModel {
+  userId: string;
+  courseId: string;
 }
