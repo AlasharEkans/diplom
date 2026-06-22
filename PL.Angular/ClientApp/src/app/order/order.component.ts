@@ -37,22 +37,13 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  getStatusText(status: string | number): string {
+  getStatusText(status: number): string {
     switch (status) {
-      case 0:
-      case 'Requested':
-        return 'Очікує підтвердження';
-      case 1:
-      case 'Active':
-        return 'Активне навчання';
-      case 2:
-      case 'Completed':
-        return 'Курс завершено';
-      case 3:
-      case 'Cancelled':
-        return 'Скасовано';
-      default:
-        return 'Невідомий статус';
+      case 0: return 'Очікує підтвердження';
+      case 1: return 'Активне навчання';
+      case 2: return 'Курс завершено';
+      case 3: return 'Скасовано';
+      default: return 'Невідомий статус';
     }
   }
 }

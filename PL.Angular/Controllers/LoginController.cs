@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PL.Angular.Models;
 using BL.Services.Interfaces;
-using Core.Extantion;
 
 namespace PL.Angular.Controllers
 {

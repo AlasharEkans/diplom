@@ -3,13 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegisterService } from './register.service';
 import { StorageService } from '../storage/storage.service';
 import { LoginService } from '../login/login.service';
-import { RegisterModel } from '../models/registerModel'
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-register',
-    templateUrl: './register.component.html',
-    styleUrls: ['./register.component.css'],
-    standalone: false
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
+  standalone: false
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -18,15 +18,14 @@ export class RegisterComponent {
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private storageService: StorageService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      name: [''],
-      surName: [''],
-      city: [''],
-      postIndex: ['']
+      firstName: [''],
+      lastName: ['']
     });
   }
 
@@ -35,33 +34,28 @@ export class RegisterComponent {
       return;
     }
 
-    const registerData = new RegisterModel(
-      this.registerForm.get('email')?.value ?? '',
-      this.registerForm.get('password')?.value ?? '',
-      this.registerForm.get('name')?.value ?? '',
-      this.registerForm.get('surName')?.value ?? '',
-      this.registerForm.get('city')?.value ?? '',
-      this.registerForm.get('postIndex')?.value ?? ''
-    );
+    const payload = {
+      email: this.registerForm.get('email')?.value,
+      password: this.registerForm.get('password')?.value,
+      firstName: this.registerForm.get('firstName')?.value,
+      lastName: this.registerForm.get('lastName')?.value
+    };
 
-    if (!registerData.isValid()) {
-      console.error('Invalid registration data');
-      return;
-    }
-
-    this.registerService.registerinto(registerData).subscribe(
+    this.registerService.registerinto(payload).subscribe(
       (res) => {
+        // Дані для подальшого авто-логіну
         const loginData = {
-          id: "00000000-0000-0000-0000-000000000000",
-          userRole: "user",
-          email: registerData.email,
-          passwordCache: registerData.password
+          email: payload.email,
+          password: payload.password
         };
 
         this.loginService.signinto(loginData).subscribe(
           (resLog) => {
             this.storageService.saveUserData(resLog);
-            this.loginService.returnhome();
+            // Переходимо на головну і оновлюємо сторінку, щоб змінилося меню
+            this.router.navigate(['/']).then(() => {
+              window.location.reload();
+            });
           },
           (errorLog) => {
             console.error('Login error:', errorLog);
@@ -70,6 +64,7 @@ export class RegisterComponent {
       },
       (error) => {
         console.error('Registration error:', error);
+        alert('Помилка при реєстрації. Можливо, такий Email вже існує.');
       }
     );
   }
