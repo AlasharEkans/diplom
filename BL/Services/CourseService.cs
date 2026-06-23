@@ -23,11 +23,13 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
         return mapper.Map<CourseDTO>(course);
     }
 
-    public async Task AddCourseAsync(CourseDTO courseDto)
+    public async Task<CourseDTO> AddCourseAsync(CourseDTO courseDto)
     {
+        courseDto.Id = Guid.NewGuid();
         var course = mapper.Map<Course>(courseDto);
         await unitOfWork.Courses.AddAsync(course);
         await unitOfWork.SaveChangesAsync();
+        return courseDto;
     }
 
     public async Task UpdateCourseAsync(CourseDTO courseDto)

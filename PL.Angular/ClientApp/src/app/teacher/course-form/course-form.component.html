@@ -1,0 +1,40 @@
+<div class="card mb-4 shadow-sm">
+  <div class="card-header">
+    <h5 class="mb-0">{{ isEdit ? 'Редагувати курс' : 'Новий курс' }}</h5>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="mb-3">
+        <label class="form-label">Назва курсу *</label>
+        <input class="form-control" formControlName="title" placeholder="Введіть назву курсу" />
+        <div class="text-danger small" *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
+          Назва є обов'язковою
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Опис</label>
+        <textarea class="form-control" formControlName="description" rows="3"
+          placeholder="Короткий опис курсу"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Автор (лектор) *</label>
+        <input class="form-control" formControlName="author" placeholder="Ім'я та прізвище лектора" />
+        <div class="text-danger small" *ngIf="form.get('author')?.invalid && form.get('author')?.touched">
+          Поле автора є обов'язковим
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Назва зображення</label>
+        <input class="form-control" formControlName="imageName" placeholder="course-image.png" />
+      </div>
+      <div class="d-flex gap-2 justify-content-end">
+        <button type="button" class="btn btn-outline-secondary" (click)="cancelled.emit()">
+          Скасувати
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting">
+          {{ isEdit ? 'Зберегти зміни' : 'Створити курс' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

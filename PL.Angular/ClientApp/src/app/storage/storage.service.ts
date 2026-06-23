@@ -1,62 +1,56 @@
-// src/app/services/storage.service.ts
 import { Injectable } from '@angular/core';
-import { OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import * as userActions from '../user/user.actions';
-import * as userSelectors from '../user/user.selectors';
-import { UserRole } from '../models/enums/user-role.enum';
-
-const USER_KEY = 'auth-user';
 
 @Injectable({
   providedIn: 'root'
 })
-export class StorageService implements OnInit {
-  user$ = this.store.select(userSelectors.selectUser);
+export class StorageService {
+  private userKey = 'userData';
 
-  constructor(private store: Store) {}
-
-  ngOnInit() {
-    this.store.dispatch(userActions.getUser());
+  // Зберігаємо всі дані користувача після логіну (токен, роль, id)
+  saveUserData(data: any): void {
+    localStorage.setItem(this.userKey, JSON.stringify(data));
   }
 
+  // Отримуємо повний об'єкт користувача
+  getUserData(): any {
+    const data = localStorage.getItem(this.userKey);
+    return data ? JSON.parse(data) : null;
+  }
+
+  // Перевіряємо, чи користувач авторизований
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem(this.userKey);
+  }
+
+  // Отримуємо роль (наприклад, для приховування меню)
+  getUserRole(): string | null {
+    const user = this.getUserData();
+    return user ? user.role : null;
+  }
+
+  // Отримуємо ID для відправки замовлень
+  getUserId(): string | null {
+    const user = this.getUserData();
+    return user ? user.id : null;
+  }
+
+  isTeacher(): boolean {
+    const user = this.getUserData();
+    return user !== null && user.role === 1; // Role.Teacher
+  }
+
+  isStudent(): boolean {
+    const user = this.getUserData();
+    return user !== null && user.role === 2; // Role.Student
+  }
+
+  // Очищення (для кнопок Logout)
   clean(): void {
-    this.store.dispatch(userActions.setUser({ userId: '', userEmail: '', userRole: '' }));
-    this.store.dispatch(userActions.getUser());
+    localStorage.removeItem(this.userKey);
   }
 
-  public saveUserData(login: any): void {
-    login.role = parseInt(login.userRole);
-    this.store.dispatch(userActions.setUser({ userId: login.id, userEmail: login.email, userRole:  login.role }));
-    this.store.dispatch(userActions.getUser());
-  }
-
-  public getUserId(): string {
-    let userId: string = '';
-    this.user$.subscribe(user => {
-      userId = user.id;
-    }).unsubscribe(); 
-
-    return userId;
-  }
-
-  public getUserRole(): UserRole | null {
-    let userRole: UserRole | null = null;
-    this.user$.subscribe(user => {
-      userRole = user.role as unknown as UserRole;
-    }).unsubscribe(); 
-
-    return userRole;
-  }
-
-  public isLoggedIn(): boolean {
-    this.user$.subscribe(
-      (user) => { 
-      });
-    let isLogged = false;
-    this.user$.subscribe(user => {
-      isLogged = user.email !== '';
-    }).unsubscribe(); 
-    return isLogged;
+  // Альтернативна назва для очищення
+  clear(): void {
+    this.clean();
   }
 }
