@@ -55,6 +55,26 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordServic
         return mapper.Map<UserDTO>(user);
     }
 
+    public async Task<UserDTO> RegisterTeacherAsync(string email, string password, string firstName, string lastName)
+    {
+        var existingUser = await unitOfWork.Users.GetByEmailAsync(email);
+        if (existingUser != null)
+            throw new InvalidOperationException("User with this email already exists.");
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = email,
+            PasswordHash = passwordService.HashPassword(password),
+            Role = Role.Teacher
+        };
+
+        await unitOfWork.Users.AddAsync(user);
+        await unitOfWork.SaveChangesAsync();
+
+        return mapper.Map<UserDTO>(user);
+    }
+
     public async Task<UserDTO?> GetByIdAsync(Guid id)
     {
         var user = await unitOfWork.Users.GetByIdAsync(id);

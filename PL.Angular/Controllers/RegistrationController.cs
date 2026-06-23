@@ -22,5 +22,23 @@ namespace PL.Angular.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("teacher")]
+        public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherModel model)
+        {
+            const string validCode = "TEACHER2025";
+            if (model.AccessCode != validCode)
+                return BadRequest("Невірний код доступу викладача.");
+
+            try
+            {
+                var user = await userService.RegisterTeacherAsync(model.Email, model.Password, model.FirstName, model.LastName);
+                return Ok(user);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -1,65 +1,43 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">{{ 'SexShop' | translate }}</a>
-
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target=".navbar-collapse"
-        aria-label="Toggle navigation"
-        [attr.aria-expanded]="isExpanded"
-        (click)="toggle()"
-      >
+      <a class="navbar-brand" [routerLink]="['/']">Освітня платформа</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation"
+              [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
       </button>
-
-      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-start" [ngClass]="{ show: isExpanded }">
+      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" [class.show]="isExpanded">
         <ul class="navbar-nav flex-grow">
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">{{ 'Store' | translate }}</a>
+          <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/']">Головна</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }" *ngIf="isLoggedIn">
-            <a class="nav-link text-dark" [routerLink]="['/cart']">{{ 'Cart' | translate }}</a>
+          <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link text-dark" [routerLink]="['/courses']">Каталог курсів</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }" *ngIf="isLoggedIn">
-            <a class="nav-link text-dark" [routerLink]="['/order']">{{ 'OrderNoun' | translate }}</a>
+          <li class="nav-item" routerLinkActive="active" *ngIf="isStudent">
+            <a class="nav-link text-dark" [routerLink]="['/cart']">Обрані курси</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }" *ngIf="isLoggedIn && isAdmin">
-            <a class="nav-link text-dark" [routerLink]="['/product']">{{ 'Add product' | translate }}</a>
+          <li class="nav-item" routerLinkActive="active" *ngIf="isStudent">
+            <a class="nav-link text-dark" [routerLink]="['/enrollments']">Моє навчання</a>
+          </li>
+          <li class="nav-item" routerLinkActive="active" *ngIf="isTeacher">
+            <a class="nav-link text-dark" [routerLink]="['/teacher/courses']">Управління курсами</a>
           </li>
         </ul>
-      </div>
-
-      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end" [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow">
-          <li class="nav-item" *ngIf="!isLoggedIn">
-            <button class="btn nav-link text-dark" id="register" [routerLink]="['/register']">{{ 'Register' | translate }}</button>
+        <ul class="navbar-nav">
+          <li class="nav-item" routerLinkActive="active" *ngIf="!isUserLoggedIn">
+            <a class="nav-link text-dark" [routerLink]="['/login']">Вхід</a>
           </li>
-          <li class="nav-item" *ngIf="!isLoggedIn">
-            <button class="btn nav-link text-dark" id="login" [routerLink]="['/login']">{{ 'Login' | translate }}</button>
+          <li class="nav-item" routerLinkActive="active" *ngIf="!isUserLoggedIn">
+            <a class="nav-link text-dark" [routerLink]="['/register']">Реєстрація студента</a>
           </li>
-          <li class="nav-item" *ngIf="isLoggedIn">
-            <button class="btn nav-link text-dark" id="logout" (click)="logout()">{{ 'Logout' | translate }}</button>
+          <li class="nav-item" routerLinkActive="active" *ngIf="!isUserLoggedIn">
+            <a class="nav-link text-dark" [routerLink]="['/teacher/register']">Реєстрація викладача</a>
+          </li>
+          <li class="nav-item" *ngIf="isUserLoggedIn">
+            <button class="btn btn-link nav-link text-dark" style="text-decoration: none;" (click)="logout()">Вихід</button>
           </li>
         </ul>
-      </div>
-
-      <div>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <button mat-button (click)="menuTrigger.openMenu()" aria-label="Language Menu">
-          <i class="material-icons md-48">language</i>
-        </button>
-        <button mat-button aria-label="Office Menu">
-          <i class="material-icons md-48">person</i>
-        </button>
-        <div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu" class="language-button"></div>
-        <mat-menu mat-button #menu="matMenu" class="custom-mat-menu">
-          <button mat-menu-item (click)="changeLanguage('en')">English</button>
-          <button mat-menu-item (click)="changeLanguage('ua')">Ukrainian</button>
-          <button mat-menu-item (click)="changeLanguage('ru')">Russian</button>
-        </mat-menu>
       </div>
     </div>
   </nav>

@@ -7,10 +7,10 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <span><strong>Дата запису:</strong> {{ enrollment.enrolledAt | date:'dd.MM.yyyy HH:mm' }}</span>
       <span class="badge" [ngClass]="{
-        'bg-warning': enrollment.status === 'Requested' || enrollment.status === 0,
-        'bg-success': enrollment.status === 'Active' || enrollment.status === 1,
-        'bg-info': enrollment.status === 'Completed' || enrollment.status === 2,
-        'bg-danger': enrollment.status === 'Cancelled' || enrollment.status === 3
+        'bg-warning': enrollment.status === 0,
+        'bg-success': enrollment.status === 1,
+        'bg-info': enrollment.status === 2,
+        'bg-danger': enrollment.status === 3
       }">
         {{ getStatusText(enrollment.status) }}
       </span>

@@ -4,6 +4,6 @@ export interface EnrollmentModel {
   id: string;
   studentId: string;
   enrolledAt: string;
-  status: string | number;
+  status: number;
   courses: EnrolledCourse[];
 }

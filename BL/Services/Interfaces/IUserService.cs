@@ -10,6 +10,7 @@ public interface IUserService
 {
     Task<UserDTO?> AuthenticateAsync(string email, string password);
     Task<UserDTO> RegisterAsync(string email, string password, string firstName, string lastName);
+    Task<UserDTO> RegisterTeacherAsync(string email, string password, string firstName, string lastName);
     Task<UserDTO?> GetByIdAsync(Guid id);
     Task<IEnumerable<UserDTO>> GetAllUsersAsync();
 }
